@@ -25,8 +25,8 @@ window.fbAsyncInit = function () {
             my_video_player.subscribe('startedPlaying', function (e) {
                 if (video_start_time === 0) {
                     video_start_time = new Date().getTime();
-                    //console.log("startedPlaying at " + my_video_player.getCurrentPosition());
-                    window.external.notify("fbevent:playing|Time#0");
+                    console.log("startedPlaying at " + my_video_player.getCurrentPosition());
+                    //window.external.notify("fbevent:videoStartedPlaying|Time#0");
 
                     var videoWidth = $('.fb-video').width();
                     var videoHeight = $('.fb-video').height();
@@ -37,15 +37,15 @@ window.fbAsyncInit = function () {
 
                 } else {
                     if (end_action.localeCompare("PAUSED") == 0) {
-                        //console.log("startedPlaying at " + my_video_player.getCurrentPosition());
-                        window.external.notify("fbevent:playing|Time#"+my_video_player.getCurrentPosition());
+                        console.log("startedPlaying at " + my_video_player.getCurrentPosition());
+                        //window.external.notify("fbevent:videoStartedPlaying|Time#"+my_video_player.getCurrentPosition());
                     }
 
                     video_end_time = new Date().getTime();
 
                     var interval = video_end_time - video_start_time;
                     total_play_time = total_play_time + Math.floor(interval);
-                    //console.log("Total Played time set to: " + total_play_time);
+                    console.log("Total Played time set to: " + total_play_time);
                     resetVideoTimes();
                     video_start_time = new Date().getTime();
                 }
@@ -60,8 +60,8 @@ window.fbAsyncInit = function () {
                 var interval = video_end_time - video_start_time;
                 total_play_time = total_play_time + Math.floor(interval);
 
-                //console.log("Total Played time is: " + total_play_time + " at " + my_video_player.getCurrentPosition());
-                window.external.notify("fbevent:paused|TotalTime#"+total_play_time+"|at#"+my_video_player.getCurrentPosition());
+                console.log("Total Played time is: " + total_play_time + " at " + my_video_player.getCurrentPosition());
+                //window.external.notify("fbevent:videoPaused|TotalTime#"+total_play_time+"|at#"+my_video_player.getCurrentPosition());
 
                 resetAllTimings();
             });
@@ -73,14 +73,14 @@ window.fbAsyncInit = function () {
                 var interval = video_end_time - video_start_time;
                 total_play_time = total_play_time + Math.floor(interval);
 
-                //console.log("FinishedPlaying with total_play_time is " + total_play_time + " at " + my_video_player.getCurrentPosition());
-                window.external.notify("fbevent:ended|TotalTime#"+total_play_time+"|at#"+my_video_player.getCurrentPosition());
+                console.log("FinishedPlaying with total_play_time is " + total_play_time + " at " + my_video_player.getCurrentPosition());
+                //window.external.notify("fbevent:videoEnded|TotalTime#"+total_play_time+"|at#"+my_video_player.getCurrentPosition());
 
                 resetAllTimings();
             });
 
             my_video_player.subscribe('error', function (e) {
-                //console.log("error");
+                console.log("error");
 
                 if (end_action.localeCompare("UNSTARTED") !== 0) {
                     video_end_time = new Date().getTime();
@@ -89,7 +89,7 @@ window.fbAsyncInit = function () {
                 }
 
                 end_action = "ERROR";
-                window.external.notify("fbevent:errorOccured|TotalTime#"+total_play_time);
+                //window.external.notify("fbevent:errorOccured|TotalTime#"+total_play_time);
             });
 
             my_video_player.subscribe('startedBuffering', function (e) {
@@ -136,18 +136,12 @@ function checkAndSetVideoWidth() {
     if (fbVideoHeight >= windowHeight) {
         var calWidth = windowHeight / aspectRatio;
         $('body').css('width', calWidth);
-        //console.log("Width Changed due to height issue");
     } else if (fbVideoWidth >= windowWidth) {
         $('body').css('width', windowWidth);
-        //console.log("Width Changed due to width issue");
     } else {
         var calWidth = windowHeight / aspectRatio;
         $('body').css('width', calWidth);
-        //console.log("Width Changed.");
     }
-
-    //console.log("fbVideoHeight is: " + fbVideoHeight + " windowHeight is " + windowHeight);
-    //console.log("fbVideoWidth is: " + fbVideoWidth + " windowWidth is " + windowWidth);
 }
 
 $(window).resize(function () {
